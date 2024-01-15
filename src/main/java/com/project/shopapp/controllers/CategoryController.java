@@ -22,7 +22,7 @@ public class CategoryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<String> getCategoryById(@PathVariable Long id){
-        return ResponseEntity.status(HttpStatus.OK).body("get detail category infomation");
+        return ResponseEntity.status(HttpStatus.OK).body("get detail category information");
     }
 
     @PostMapping("")
