@@ -1,5 +1,6 @@
 package com.project.shopapp.configurations;
 
+import com.project.shopapp.filters.JwtTokenFilter;
 import com.project.shopapp.models.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,13 +19,14 @@ import static org.springframework.http.HttpMethod.DELETE;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
-//    private final JwtTokenFilter jwtTokenFilter;
+    private final JwtTokenFilter jwtTokenFilter;
     @Value("${api.prefix}")
     private String apiPrefix;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)  throws Exception{
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(requests -> {
                     requests.requestMatchers("**")
                             .permitAll();
