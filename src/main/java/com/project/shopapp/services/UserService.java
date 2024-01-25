@@ -3,8 +3,9 @@ package com.project.shopapp.services;
 import com.project.shopapp.components.JwtTokenUtil;
 import com.project.shopapp.dtos.UserDTO;
 import com.project.shopapp.exceptions.DataNotFoundException;
-import com.project.shopapp.models.Role;
-import com.project.shopapp.models.User;
+
+import com.project.shopapp.exceptions.PermissionDenyException;
+import com.project.shopapp.models.*;
 import com.project.shopapp.repositories.RoleRepository;
 import com.project.shopapp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class UserService implements IUserService{
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public User createUser(UserDTO userDTO) throws DataNotFoundException {
+    public User createUser(UserDTO userDTO) throws Exception {
         //register user
         String phoneNumber = userDTO.getPhoneNumber();
         // Kiểm tra xem số điện thoại đã tồn tại hay chưa
@@ -36,9 +37,9 @@ public class UserService implements IUserService{
         }
         Role role =roleRepository.findById(userDTO.getRoleId())
                 .orElseThrow(() -> new DataNotFoundException("Role not found"));
-//        if(role.getName().toUpperCase().equals(Role.ADMIN)) {
-//            throw new PermissionDenyException("You cannot register an admin account");
-//        }
+        if(role.getName().toUpperCase().equals(Role.ADMIN)) {
+            throw new PermissionDenyException("You cannot register an admin account");
+        }
         //convert from userDTO => user
         User newUser = User.builder()
                 .fullName(userDTO.getFullName())
@@ -85,3 +86,16 @@ public class UserService implements IUserService{
         return jwtTokenUtil.generateToken(existingUser);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
